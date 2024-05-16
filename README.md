@@ -46,14 +46,16 @@ https://cocodataset.org/#download
 ```bash
   python training_vid_cap.py
 ```
-or use the trained model in the checkpoints folder
-
+or use the trained model from this link: https://drive.google.com/drive/folders/1fm5rXDiMiPJhwdxjwihKtCiZlH1uBe0m?usp=sharing
+then put the file in checkpoints folder  
 ### For feature extraction run   
 
 ```bash
   python Swin_feat_extraction.py
   python EffeB3_feat_extraction.py
 ```
+or use extracted features from this link: https://drive.google.com/drive/folders/1IGZPW_e8MRQLG8qHlLiTf22sOvo8ssJd?usp=sharing
+then put them in feature folder inside data/MSVD folder
 
 # Results
 Video description
