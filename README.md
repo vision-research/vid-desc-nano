@@ -57,7 +57,7 @@ or use the trained model in the checkpoints folder
 
 # Results
 Video description
-![Res](https://github.com/vision-research/vid-desc-nano/assets/169878400/ac808c20-31bb-4af9-99f5-2f5c4fb686f4)
+![Res2](https://github.com/vision-research/vid-desc-nano/assets/169878400/cc66dd0f-9525-40d1-abab-deef088a6607)
 
 Object detection using: a) yolov7-tiny  b) yolov7-W6
 ![obj](https://github.com/vision-research/vid-desc-nano/assets/169878400/0a2dc205-a907-42dc-a84e-b46d17bff14e)
