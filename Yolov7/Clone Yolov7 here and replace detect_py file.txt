@@ -1,0 +1,7 @@
+
+1- Clone the Yolov7 to this folder:
+
+   https://github.com/WongKinYiu/yolov7.git
+
+2- Replace the detect.py with the modified version
+

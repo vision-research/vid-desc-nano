@@ -1,0 +1,5 @@
+
+Clone the Video_Swin_Transformer to this folder:
+
+https://github.com/SwinTransformer/Video-Swin-Transformer.git
+
