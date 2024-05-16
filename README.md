@@ -54,18 +54,15 @@ or use the trained model in the checkpoints folder
   python Swin_feat_extraction.py
   python EffeB3_feat_extraction.py
 ```
-# Hardware components
-
-
-
 
 # Results
 
-
+![Res](https://github.com/vision-research/vid-desc-nano/assets/169878400/ac808c20-31bb-4af9-99f5-2f5c4fb686f4)
 
 Video description
+------------------------------------------------
 
-
+![obj](https://github.com/vision-research/vid-desc-nano/assets/169878400/0a2dc205-a907-42dc-a84e-b46d17bff14e)
 
 Object detection: a) yolov7-tiny  b) yolov7-W6
 
