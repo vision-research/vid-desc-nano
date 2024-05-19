@@ -3,7 +3,7 @@
 This project aims to assist visually impaired individuals by generating audio descriptions of their environment using object detection and video description techniques. It has been tested and deployed on the NVIDIA Jetson Nano 4GB.
 
 
-# Usage
+## Usage
 Our project is implemented with PyTorch framework
 
 ### Environment
@@ -57,10 +57,10 @@ then put the file in checkpoints folder
 or use extracted features from this link: https://drive.google.com/drive/folders/1IGZPW_e8MRQLG8qHlLiTf22sOvo8ssJd?usp=sharing
 then put them in feature folder inside data/MSVD folder
 
-# Hardware components of the proposed system 
-![h](https://github.com/vision-research/vid-desc-nano/assets/169878400/3c539e07-050d-4216-913d-2e3f06d070ee)
+## Hardware Components 
+![h](https://github.com/vision-research/vid-desc-nano/assets/169878400/564ffb43-ab33-47d0-b247-e731d8e03496)
 
-# Results
+## Results
 Video description
 ![Res2](https://github.com/vision-research/vid-desc-nano/assets/169878400/cc66dd0f-9525-40d1-abab-deef088a6607)
 
