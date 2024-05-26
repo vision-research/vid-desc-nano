@@ -604,26 +604,29 @@ def video_description(model, vocab, beam_width=BEAM, beam_alpha=alpha):
    
     
 ########################################################################################################
-    from gtts import gTTS
-    import pygame
-    from io import BytesIO
-
     def speak(text):
-        if not text or text.strip() == "":
-            print("Error: No text to speak.")
-            return
+        
+        import subprocess
 
-        tts = gTTS(text=text, lang='en')
-        fp = BytesIO()
-        tts.write_to_fp(fp)
-        fp.seek(0)
+         
+        model = "en_US-kathleen-low.onnx"    # Update path to Piper model, u can choose other language i.e. Arabic, French, ...
 
-        pygame.mixer.init()
-        pygame.mixer.music.load(fp)
-        pygame.mixer.music.play()
+         
+        output_file = "text.wav"
 
-        while pygame.mixer.music.get_busy():
-            pygame.time.Clock().tick(10)
+        # Command to be executed
+        command = f'echo "{text}" | piper.exe -m {model} -f {output_file}'
+
+        # Run the command
+        result = subprocess.run(command, shell=True, capture_output=True, text=True)
+
+        # Print the output of the command
+        print("stdout:", result.stdout)
+        print("stderr:", result.stderr)
+
+        from playsound import playsound
+
+        playsound('text.wav')
 
 ######################################################################################################## 
     
@@ -793,107 +796,108 @@ def build_model(C, vocab):
 
 
 
-from gtts import gTTS
-import pygame
-from io import BytesIO
+  
 
 def speak(text):
     
+    import subprocess
 
-    tts = gTTS(text=text, lang='en')
-    fp = BytesIO()
-    tts.write_to_fp(fp)
-    fp.seek(0)
+     
+    model = "en_US-kathleen-low.onnx"   
 
-    pygame.mixer.init()
-    pygame.mixer.music.load(fp)
-    pygame.mixer.music.play()
+     
+    output_file = "text.wav"
 
-    while pygame.mixer.music.get_busy():
-        pygame.time.Clock().tick(10)
+    # Command to be executed
+    command = f'echo "{text}" | piper.exe -m {model} -f {output_file}'
 
- 
+    # Run the command
+    result = subprocess.run(command, shell=True, capture_output=True, text=True)
+
+    # Print the output of the command
+    print("stdout:", result.stdout)
+    print("stderr:", result.stderr)
+
+    from playsound import playsound
+
+    playsound('text.wav')
+
+import os
+import queue
+import sounddevice as sd
+import vosk
+import json
+import sys 
  
 def main():
     
-    from gtts import gTTS
-    import pygame
-    from io import BytesIO
-
-    def speak(text):
      
+    
+    # Set the model path for VOSK recognizer
+    model_path = "vosk-model-small-en-us-0.15"  # Update this to your model path
 
-        tts = gTTS(text=text, lang='en')
-        fp = BytesIO()
-        tts.write_to_fp(fp)
-        fp.seek(0)
+    # Initialize the recognizer
+    if not os.path.exists(model_path):
+        print(f"Model path {model_path} does not exist.")
+        exit(1)
 
-        pygame.mixer.init()
-        pygame.mixer.music.load(fp)
-        pygame.mixer.music.play()
+    model = vosk.Model(model_path)
+    recognizer = vosk.KaldiRecognizer(model, 16000)
 
-        while pygame.mixer.music.get_busy():
-            pygame.time.Clock().tick(10)
+    # Queue to hold audio data
+    q = queue.Queue()
 
-    import speech_recognition as sr
- 
+    # Audio callback function
+    def callback(indata, frames, time, status):
+        if status:
+            print(status, file=sys.stderr)
+        q.put(bytes(indata))
 
+    # Start the stream
     def recognize_single_word():
-        recognizer = sr.Recognizer()
-
-        with sr.Microphone() as source:
+        with sd.RawInputStream(samplerate=16000, blocksize=8000, dtype='int16',
+                               channels=1, callback=callback):
             text = 'Listening for your command'
             speak(text)
-        
-            audio = recognizer.listen(source, phrase_time_limit=1)
-            
-         
-        try:
-           
-            word = recognizer.recognize_google(audio, language="en-US")
-            
-            return word.lower()
-        except sr.UnknownValueError:
-            text = 'Unknown command, please repeat your command'
-            speak(text)
-            return None
-        except sr.RequestError as e:
-            text = "Could not request results from Google Speech Recognition service: {}".format(e)
-            speak(text)
-            return None
 
-    def execute_command(command):
-        if command == "detect":  # object detection module
-            detect()
-            
-        elif command == "describe": # video captioning module
-            
-           args = parse_args()
-           C = importlib.import_module(args.config).TrainConfig # = import configs.train_stage1.TrainConfig
-            
-          
-           vocab = load_vocab('vocab_min_5_max_15.pkl')
-            
-           model = build_model(C, vocab)
-        
-           best_ckpt_fpath = './checkpoints/epoch_21_effeB3-Swin-S__1024_dim.ckpt'  # checpoint not for same features
-           
-           best_model = load_checkpoint(model, best_ckpt_fpath)
-           
-             
-           video_description(best_model, best_model.vocab)
-           
-         
-        else:
-            text = 'Unknown command, please repeat your command'
-            speak(text)
+            while True:
+                data = q.get()
+                if recognizer.AcceptWaveform(data):
+                    result = recognizer.Result()
+                    result_dict = json.loads(result)
+                    print(result_dict)
+                    if 'text' in result_dict:
+                        text = result_dict['text']
+                        if "detect" in text:                           
+                            detect()
+                                
+                        elif "describe" in text:
+                            args = parse_args()
+                            C = importlib.import_module(args.config).TrainConfig # = import configs.train_stage1.TrainConfig
+                             
+                           
+                            vocab = load_vocab('vocab_min_5_max_15.pkl')
+                             
+                            model = build_model(C, vocab)
+                         
+                            best_ckpt_fpath = './checkpoints/epoch_21_effeB3-Swin-S__1024_dim.ckpt'  # checpoint not for same features
+                            
+                            best_model = load_checkpoint(model, best_ckpt_fpath)
+                            
+                              
+                            video_description(best_model, best_model.vocab)
+                        
+                        else:
+                            text = 'Unknown command, please repeat your command'
+                            speak(text)
+                else:
+                    text = 'Unknown command, please repeat your command'
+                    speak(text)
          
     # Main loop
     while True:
-        word = recognize_single_word()
-        if word is not None:
-            execute_command(word)
-            # Exit the loop after recognizing a word
+        recognize_single_word()
+    
 
      
 if __name__ == "__main__":
